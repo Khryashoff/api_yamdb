@@ -5,13 +5,45 @@ from .validators import validate_year_not_future
 
 
 class Category(models.Model):
+    """Класс, представляющий категории."""
+    name = models.CharField(
+        verbose_name='Наименование категории',
+        max_length=256,
+    )
+    slug = models.SlugField(
+        verbose_name='Идентификатор категории',
+        max_length=50,
+        unique=True,
+    )
 
-    pass
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+    def __str__(self) -> str:
+        return self.slug[:10]
 
 
 class Genre(models.Model):
+    """Класс, представляющий жанры."""
+    name = models.CharField(
+        verbose_name='Наименование жанра',
+        max_length=256,
+    )
+    slug = models.SlugField(
+        verbose_name='Идентификатор жанра',
+        max_length=50,
+        unique=True,
+    )
 
-    pass
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self) -> str:
+        return self.slug[:10]
 
 
 class Title(models.Model):
@@ -21,7 +53,6 @@ class Title(models.Model):
         verbose_name='Категория контента',
         related_name='titles',
         on_delete=models.SET_NULL,
-        blank=True,
         null=True,
     )
     genre = models.ManyToManyField(
@@ -32,7 +63,7 @@ class Title(models.Model):
     )
     name = models.CharField(
         verbose_name='Наименование произведения',
-        max_length=150,
+        max_length=256,
     )
     year = models.IntegerField(
         verbose_name='Дата релиза произведения',
@@ -50,5 +81,5 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
