@@ -1,7 +1,10 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from users.models import User
 
 from .validators import validate_year_not_future
+
 
 
 class Category(models.Model):
@@ -83,3 +86,44 @@ class Title(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Review(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        blank=False
+    )
+    text = models.TextField(max_length=1000, blank=True)
+    score = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        null=True,
+    )
+    text = models.TextField(
+    )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+    )
