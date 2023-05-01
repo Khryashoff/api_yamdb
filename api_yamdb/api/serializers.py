@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.db.models import Avg
 
 from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
@@ -24,15 +24,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели Genre.
-    """
+    """Сериализатор модели Genre."""
+
     class Meta:
         model = Genre
         fields = '__all__'
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    """Сериализатор модели Title."""
+
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         many=True,
@@ -42,17 +43,42 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Category.objects.all()
     )
+    rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = (
+            "id",
+            "name",
+            "year",
+            "rating",
+            "description",
+            "genre",
+            "category",
+        )
+
+    def get_rating(self, obj):
+        obj = obj.reviews.all().aggregate(rating=Avg("score"))
+        return obj["rating"]
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    # title = serializers.SlugRelatedField(
+    #     slug_field='id', # choices: category, category_id, description, genre, id, name, reviews, year
+    #     many=True,
+    #     queryset=Title.objects.all()
+    # )
+    author = serializers.SlugRelatedField(
+        default=serializers.CurrentUserDefault(),
+        slug_field="username",
+        queryset=User.objects.all(),
+    )
 
     class Meta:
         model = Review
-        fields = ("id", "text", "score", "pub_date")  # уточнить
+        fields = ("id", "title", "text", "score", "author", "pub_date")
+
+    # дописать def create(self, validated_data):
 
 
 class CommentSerializer(serializers.ModelSerializer):
