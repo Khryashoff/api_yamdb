@@ -28,7 +28,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
 
-
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     pagination_class = LimitOffsetPagination
@@ -40,6 +39,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = LimitOffsetPagination
     # permission_classes = (AuthorOrReadOnly,)
+
+    # def get_serializer_class(self):
+    #     # если запрашивается review_id
+    #     if self.action == 'retrieve':
+    #         return ReviewRetrySerializer
+        
+    #     return ReviewSerializer 
 
 
     def get_queryset(self):

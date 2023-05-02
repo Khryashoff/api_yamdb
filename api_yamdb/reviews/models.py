@@ -94,7 +94,7 @@ class Review(models.Model):
         related_name='reviews',
         blank=False,
     )
-    text = models.TextField(max_length=1000, blank=True)
+    text = models.TextField(max_length=1000, blank=False)
     score = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         blank=False,
@@ -104,7 +104,6 @@ class Review(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
-
     )
     pub_date = models.DateTimeField(auto_now_add=True)
 
