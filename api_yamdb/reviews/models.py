@@ -6,7 +6,6 @@ from users.models import User
 from .validators import validate_year_not_future
 
 
-
 class Category(models.Model):
     """Класс, представляющий категории."""
     name = models.CharField(
@@ -84,7 +83,7 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
 
@@ -93,12 +92,13 @@ class Review(models.Model):
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
-        blank=False
+        blank=False,
     )
-    text = models.TextField(max_length=1000, blank=True)
+    text = models.TextField(max_length=1000, blank=False)
     score = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],
-        blank=False
+        blank=False,
+        default=1
     )
     author = models.ForeignKey(
         User,
@@ -107,14 +107,16 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.text[:20]
+
 
 class Comment(models.Model):
     review = models.ForeignKey(
         Review,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name='comments',
+        null=True,
     )
     author = models.ForeignKey(
         User,
@@ -127,3 +129,6 @@ class Comment(models.Model):
     pub_date = models.DateTimeField(
         auto_now_add=True,
     )
+
+    def __str__(self):
+        return self.text[:20]
