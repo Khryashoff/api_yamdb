@@ -6,15 +6,6 @@ from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели User.
-    """
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор модели Category."""
     class Meta:
@@ -95,13 +86,12 @@ class TitleDetailSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для получения отзыва."""
-    author = 1
-    # author = serializers.SlugRelatedField(
-    #     default=serializers.CurrentUserDefault(),
-    #     required=False,
-    #     slug_field='author',
-    #     queryset=User.objects.all(),
-    # )
+    author = serializers.SlugRelatedField(
+        default=serializers.CurrentUserDefault(),
+        required=False,
+        slug_field='author',
+        queryset=User.objects.all(),
+    )
     title = serializers.SlugRelatedField(
         required=False,
         queryset=Title.objects.all(),

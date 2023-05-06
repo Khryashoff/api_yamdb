@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from django.core.mail import EmailMessage
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @api_view(['POST'])
@@ -17,7 +18,6 @@ def signup(request):
     email = serializer.data['email']
     username = serializer.data['username']
     user, _ = User.objects.get_or_create(email=email, username=username)
-    # confirmation_code = secrets.token_urlsafe(4)
     confirmation_code = default_token_generator.make_token(user)
     mail = EmailMessage(
         subject='Confirmation-code YAMDB',
@@ -39,29 +39,17 @@ def token(request):
     user = get_object_or_404(User, username=username)
 
     if default_token_generator.check_token(user, confirmation_code):
-        token = confirmation_code
+        token = str(AccessToken.for_user(user))
         return Response({'token': token}, status=HTTP_200_OK)
     return Response(status=400)
 
 
-# from django.contrib.auth import get_user_model
-# from users.models import User
-
-# def signup():
-
-# from django.contrib.auth import get_user_model
-
 # from rest_framework.decorators import action
 # from rest_framework.pagination import PageNumberPagination
-# from rest_framework.permissions import IsAuthenticated
-# from rest_framework.response import Response
 # from rest_framework import viewsets
 
 # from users.serializers import UsersSerializer
 # from .permissions import IsAdmin
-
-
-# User = get_user_model()
 
 
 # class UsersViewSet(viewsets.ModelViewSet):
