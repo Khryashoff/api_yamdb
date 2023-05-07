@@ -5,6 +5,7 @@ from django.db import models
 
 class User(AbstractUser):
     """Класс, представляющий пользователя."""
+
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'

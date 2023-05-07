@@ -1,23 +1,14 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from django.db.models import Avg
+# from django.db.models import Avg
 
 from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели User.
-    """
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 class CategorySerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели Category.
-    """
+    """Сериализатор модели Category."""
+
     class Meta:
         model = Category
         fields = '__all__'
@@ -31,18 +22,11 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Title."""
+class TitleRetrieveSerializer(serializers.ModelSerializer):
+    """Сериализатор модели Title для чтения."""
 
-    genre = serializers.SlugRelatedField(
-        slug_field='slug',
-        many=True,
-        queryset=Genre.objects.all()
-    )
-    category = serializers.SlugRelatedField(
-        slug_field='slug',
-        queryset=Category.objects.all()
-    )
+    genre = GenreSerializer()
+    category = CategorySerializer()   
     rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -57,25 +41,66 @@ class TitleSerializer(serializers.ModelSerializer):
             "category",
         )
 
-    def get_rating(self, obj):
-        obj = obj.reviews.all().aggregate(rating=Avg("score"))
-        return obj["rating"]
+    # def get_rating(self, obj):
+    #     obj = obj.reviews.all().aggregate(rating=Avg("score"))
+    #     return obj["rating"]
+
+
+class TitleCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор модели Title для записи."""
+
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True,
+    )
+    category = CategorySerializer()
+
+    class Meta:
+        model = Title
+        fields = (
+            "id",
+            "name",
+            "year",
+            "description",
+            "genre",
+            "category",
+        )
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Сериализатор для получения отзыва по id."""
+    """Сериализатор для получения отзыва."""
 
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
-        slug_field="username",
+        required=False,
+        slug_field='author',
         queryset=User.objects.all(),
     )
+    title = serializers.SlugRelatedField(
+        required=False,
+        queryset=Title.objects.all(),
+        slug_field='title'
+    ) #объект title в url
+    
 
     class Meta:
         model = Review
-        fields = ("id", "title", "text", "score", "author", "pub_date")
+        fields = (
+            "title",
+            "author",
+            "text",
+            "score")
 
-    # дописать def create(self, validated_data):
+    def validate(self, attrs):
+        author = attrs.get('author')
+        title = attrs.get('title')
+        if Review.objects.filter(
+            author=author, title=title
+        ).exists():
+            raise serializers.ValidationError(
+                'Допускается только один отзыв!')
+        return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):

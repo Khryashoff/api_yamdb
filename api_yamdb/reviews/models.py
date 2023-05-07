@@ -107,6 +107,9 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('author', 'title')
+
     def __str__(self):
         return self.text[:20]
 
@@ -114,10 +117,9 @@ class Review(models.Model):
 class Comment(models.Model):
     review = models.ForeignKey(
         Review,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name='comments',
+        null=True,
     )
     author = models.ForeignKey(
         User,
