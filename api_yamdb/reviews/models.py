@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from users.models import User
+from api_yamdb.settings import (FIRST_CHARACTERS_OF_LINK,
+                                FIRST_CHARACTERS_OF_TEXT)
 
 from .validators import validate_year_not_future
 
@@ -24,7 +26,7 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.slug[:10]
+        return self.slug[:FIRST_CHARACTERS_OF_LINK]
 
 
 class Genre(models.Model):
@@ -45,7 +47,7 @@ class Genre(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self) -> str:
-        return self.slug[:10]
+        return self.slug[:FIRST_CHARACTERS_OF_LINK]
 
 
 class Title(models.Model):
@@ -83,11 +85,12 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
 class Review(models.Model):
+    """Класс, представляющий отзывы."""
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -108,10 +111,11 @@ class Review(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.text[:20]
+        return self.text[:FIRST_CHARACTERS_OF_TEXT]
 
 
 class Comment(models.Model):
+    """Класс, представляющий комментарии."""
     review = models.ForeignKey(
         Review,
         blank=True,
@@ -132,4 +136,4 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return self.text[:20]
+        return self.text[:FIRST_CHARACTERS_OF_TEXT]

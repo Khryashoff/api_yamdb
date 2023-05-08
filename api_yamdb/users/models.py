@@ -53,3 +53,20 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_user(self):
+        return True if not self.is_staff else None
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
+
+    def save(self, *args, **kwargs):
+        if self.role == self.is_admin:
+            self.is_staff = True
+        super().save(*args, **kwargs)

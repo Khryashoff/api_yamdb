@@ -6,18 +6,14 @@ from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели User.
-    """
+    """Сериализатор модели User."""
     class Meta:
         model = User
         fields = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """
-    Сериализатор модели Category.
-    """
+    """Сериализатор модели Category."""
     class Meta:
         model = Category
         fields = '__all__'
@@ -25,7 +21,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор модели Genre."""
-
     class Meta:
         model = Genre
         fields = '__all__'
@@ -33,7 +28,6 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     """Сериализатор модели Title."""
-
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         many=True,
@@ -48,18 +42,18 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            "id",
-            "name",
-            "year",
-            "rating",
-            "description",
-            "genre",
-            "category",
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category',
         )
 
     def get_rating(self, obj):
-        obj = obj.reviews.all().aggregate(rating=Avg("score"))
-        return obj["rating"]
+        obj = obj.reviews.all().aggregate(rating=Avg('score'))
+        return obj['rating']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
