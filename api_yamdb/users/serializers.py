@@ -34,16 +34,6 @@ class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
-    def validate(self, data):
-        username = data.get('username')
-        user = get_object_or_404(User, username=username)
-        input_confirmation_code = data.get('confirmation_code')
-        if input_confirmation_code != user.confirmation_code:
-            raise serializers.ValidationError(
-                'Некорректный код подтверждения.'
-            )
-        return data
-
 
 class UsersSerializer(serializers.ModelSerializer):
 

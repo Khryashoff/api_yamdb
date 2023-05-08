@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-# from django.db.models import Avg
+from django.db.models import Avg
 
 from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
@@ -11,7 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -19,15 +19,15 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitleRetrieveSerializer(serializers.ModelSerializer):
     """Сериализатор модели Title для чтения."""
 
-    genre = GenreSerializer()
-    category = CategorySerializer()   
-    rating = serializers.SerializerMethodField(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
@@ -41,9 +41,9 @@ class TitleRetrieveSerializer(serializers.ModelSerializer):
             "category",
         )
 
-    # def get_rating(self, obj):
-    #     obj = obj.reviews.all().aggregate(rating=Avg("score"))
-    #     return obj["rating"]
+    def get_rating(self, obj):
+        obj = obj.reviews.all().aggregate(rating=Avg("score"))
+        return obj["rating"]
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -54,7 +54,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         slug_field='slug',
         many=True,
     )
-    category = CategorySerializer()
+    category = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Title
@@ -69,30 +69,23 @@ class TitleCreateSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Сериализатор для получения отзыва."""
 
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
-        required=False,
-        slug_field='author',
-        queryset=User.objects.all(),
+        slug_field='username',
+        read_only=True
     )
-    title = serializers.SlugRelatedField(
-        required=False,
-        queryset=Title.objects.all(),
-        slug_field='title'
-    ) #объект title в url
-    
 
     class Meta:
         model = Review
-        fields = (
-            "title",
-            "author",
-            "text",
-            "score")
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
 
-    def validate(self, attrs):
+    def validate_score(self, value):
+        if 1 >= value >= 10:
+            raise serializers.ValidationError('Значения score от 1 до 10!')
+        return value
+
+    def validate(self, attrs): #дополнить
         author = attrs.get('author')
         title = attrs.get('title')
         if Review.objects.filter(
@@ -104,8 +97,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField(read_only=True)
+
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')

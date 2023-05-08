@@ -1,9 +1,8 @@
 import pandas as pd
 import os
 import django
-from reviews.models import Title
-import csv
-from reviews.models import Title, Genre, Category
+# import csv
+from reviews.models import Genre
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api_yamdb.settings')
@@ -14,11 +13,11 @@ csv_file_path = 'static/data/titles.csv'
 data = pd.read_csv(csv_file_path)
 
 for index, row in data.iterrows():
-    new_entry = Title(
+    new_entry = Genre(
         id=row['id'],
         name=row['name'],
-        year=row['year'],
-        category=row['category_id']
+        slug=row['slug'],
+        # category=row['category_id']
     )
     new_entry.save()
 print('Import Complete!')

@@ -5,7 +5,7 @@ from django.contrib.auth.tokens import default_token_generator
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from django.core.mail import EmailMessage
 from rest_framework_simplejwt.tokens import AccessToken
 # from rest_framework.decorators import action
@@ -43,7 +43,7 @@ def token(request):
     if default_token_generator.check_token(user, confirmation_code):
         token = str(AccessToken.for_user(user))
         return Response({'token': token}, status=HTTP_200_OK)
-    return Response(status=400)
+    return Response(status=HTTP_400_BAD_REQUEST)
 
 # class UsersViewSet(viewsets.ModelViewSet):
 #     queryset = User.objects.all()

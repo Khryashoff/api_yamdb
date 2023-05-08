@@ -24,7 +24,7 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.slug[:10]
+        return f'{self.name}, {self.slug}' #изменить ?{'name': 'Фильм', 'slug': 'films'}
 
 
 class Genre(models.Model):
@@ -45,7 +45,7 @@ class Genre(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self) -> str:
-        return self.slug[:10]
+        return self.name[:10]
 
 
 class Title(models.Model):
@@ -97,8 +97,7 @@ class Review(models.Model):
     text = models.TextField(max_length=1000, blank=False)
     score = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],
-        blank=False,
-        default=1
+        blank=False
     )
     author = models.ForeignKey(
         User,
