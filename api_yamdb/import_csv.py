@@ -1,34 +1,58 @@
-import pandas as pd
-import os
-import django
-from reviews.models import Title
+from reviews.models import Genre, Category, Title, Review
 import csv
-from reviews.models import Title, Genre, Category
+file_path = 'static/data/genre.csv'
+
+with open('static/data/genre.csv') as csv_file:
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        id = row['id']
+        name = row['name']
+        slug = row['slug']
+        genres = Genre(id=id, name=name, slug=slug)
+        genres.save()
+    csv_file.close()
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api_yamdb.settings')
-django.setup()
+with open('static/data/category.csv') as csv_file:
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        id = row['id']
+        name = row['name']
+        slug = row['slug']
+        category = Category(id=id, name=name, slug=slug)
+        category.save()
+    csv_file.close()
 
-csv_file_path = 'static/data/titles.csv'
 
-data = pd.read_csv(csv_file_path)
+with open('static/data/titles.csv', encoding="utf-8") as csv_file:
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        id = row['id']
+        name = row['name']
+        year = row['year']
+        # не указываю категорию - ошибка
+        title = Title(id=id, name=name, year=year)
+        title.save()
+    csv_file.close()
 
-for index, row in data.iterrows():
-    new_entry = Title(
-        id=row['id'],
-        name=row['name'],
-        year=row['year'],
-        category=row['category_id']
-    )
-    new_entry.save()
-print('Import Complete!')
-
-# with open('static/data/titles.csv') as csvfile:
-#     reader = csv.reader(csvfile)
-#     next(reader)  # skip header row
-#     records = []
-
-#     for row in reader:
-#         records.append(Title(**row))
-#     Title.objects.bulk_create(records)
-#     print("Успешно!")
+with open('static/data/review.csv', encoding="utf-8") as csv_file:
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        id = row['id']
+        title_id = row['title_id']
+        text = row['text']
+        author_id = row['author']
+        score = row['score']
+        pub_date = row['pub_date']
+        review = Review(
+            id=id,
+            title_id=title_id,
+            author_id=author_id,
+            score=score,
+            pub_date=pub_date)
+        review.save()
+    csv_file.close()

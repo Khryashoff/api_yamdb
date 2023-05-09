@@ -1,34 +1,72 @@
 from rest_framework import permissions
 
 
-class AuthorOrReadOnly(permissions.BasePermission):
-    """
-    Проверка разрешений для объекта.
+class IsAdmin(permissions.BasePermission):
+    """Проверка, что админ или суперюзер"""
 
-    Аутентифицированным пользователям доступно только чтение.
-    Аутентифицированные авторы публикаций могут редактировать или удалять их.
-    """
     def has_permission(self, request, view):
-        """
-        Проверяет, имеет ли данный запрос права доступа к представлению.
-        """
+        return request.user.is_authenticated and request.user.is_admin
+
+
+class AuthorAdminModerator(permissions.BasePermission):
+
+    def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        """
-        Проверяет, имеет ли пользователь право на данное действие над объектом.
-        """
         return (request.method in permissions.SAFE_METHODS
-                or obj.author == request.user)
+                or obj.author == request.user
+                or request.user.is_admin
+                or request.user.is_moderator
+                )
+# class IsAuthorModeratorAdminOrReadOnly(permissions.BasePermission):
+#     """
+#     Проверка разрешений для объекта.
+
+#     Аутентифицированным пользователям доступно только чтение.
+#     Аутентифицированные авторы публикаций, модераторы и
+#     администраторы могут редактировать или удалять их.
+#     """
+#     def has_permission(self, request, view):
+#         return (
+#             request.method in permissions.SAFE_METHODS
+#             or request.user.is_authenticated
+#         )
+
+#     def has_object_permission(self, request, view, obj):
+#         return (
+#             request.method in permissions.SAFE_METHODS
+#             or obj.author == request.user or request.user.is_moderator
+#             or request.user.is_admin or request.user.is_superuser
+#         )
 
 
-class AdminOrReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return (
-            request.method in permissions.SAFE_METHODS
-            or (
-                request.user.is_authenticated
-                and request.user.is_admin
-            )
-        )
+# class IsAdminOrReadOnly(permissions.BasePermission):
+#     """
+#     Проверка разрешений для объекта.
+
+#     Администраторы обладают всеми правами.
+#     Остальные пользователи обладают правами только на чтение.
+#     """
+#     def has_permission(self, request, view):
+#         return (
+#             request.method in permissions.SAFE_METHODS
+#             or (
+#                 request.user.is_authenticated
+#                 and request.user.is_admin or request.user.is_superuser
+#             )
+#         )
+
+
+# class IsAdminOnly(permissions.BasePermission):
+#     """
+#     Проверка разрешений для объекта.
+
+#     Администраторы обладают всеми правами.
+#     """
+#     def has_permission(self, request, view):
+#         return (
+#             request.user.is_authenticated
+#             and request.user.is_admin or request.user.is_superuser
+#         )

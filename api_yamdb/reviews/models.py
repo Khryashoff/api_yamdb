@@ -2,8 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from users.models import User
-from api_yamdb.settings import (FIRST_CHARACTERS_OF_LINK,
-                                FIRST_CHARACTERS_OF_TEXT)
+from api_yamdb.settings import FIRST_CHARACTERS_OF_TEXT
 
 from .validators import validate_year_not_future
 
@@ -26,7 +25,10 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.slug[:FIRST_CHARACTERS_OF_LINK]
+        return self.name
+
+    # def __str__(self) -> str:
+    #     return f'{self.name}, {self.slug}' # изменить ?{'name': 'Фильм', 'slug': 'films'}
 
 
 class Genre(models.Model):
@@ -47,7 +49,7 @@ class Genre(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self) -> str:
-        return self.slug[:FIRST_CHARACTERS_OF_LINK]
+        return self.name
 
 
 class Title(models.Model):
@@ -62,8 +64,8 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         verbose_name='Жанр контента',
+        through='GenreTitle',
         related_name='titles',
-        blank=True,
     )
     name = models.CharField(
         verbose_name='Наименование произведения',
@@ -75,9 +77,9 @@ class Title(models.Model):
     )
     description = models.TextField(
         verbose_name='Описание произведения',
+        default='Нет описания',
         max_length=200,
         blank=True,
-        null=True,
     )
 
     class Meta:
@@ -85,8 +87,26 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
+    def __str__(self):
+        return f'{self.name} {self.genres}'
+
+
+class GenreTitle(models.Model):
+    """Класс, представляющий связь жанров и произведений."""
+    genre = models.ForeignKey(
+        Genre,
+        verbose_name='Жанр контента',
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    title = models.ForeignKey(
+        Title,
+        verbose_name='Произведение',
+        on_delete=models.CASCADE,
+    )
+
     def __str__(self) -> str:
-        return self.name
+        return f'Произведение {self.title} относится к жанру {self.genre}'
 
 
 class Review(models.Model):
@@ -110,6 +130,9 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('author', 'title')
+
     def __str__(self):
         return self.text[:FIRST_CHARACTERS_OF_TEXT]
 
@@ -118,10 +141,9 @@ class Comment(models.Model):
     """Класс, представляющий комментарии."""
     review = models.ForeignKey(
         Review,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name='comments',
+        null=True,
     )
     author = models.ForeignKey(
         User,

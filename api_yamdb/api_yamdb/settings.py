@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+# from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -106,8 +108,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+DEFAULT_FROM_EMAIL = 'noreply@yamdb.ru'
+
+# STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
@@ -120,8 +132,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
 }
 
-# The number of first characters of the link displayed by default
-FIRST_CHARACTERS_OF_LINK = 10
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=6000),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=6000),
+# }
 
 # The number of first characters of the text displayed by default
 FIRST_CHARACTERS_OF_TEXT = 20
+
+USERNAME_NAME: int = 150
+EMAIL: int = 254
