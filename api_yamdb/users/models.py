@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import validate_email
 from django.db import models
 from api_yamdb.settings import EMAIL, USERNAME_NAME
 
@@ -17,9 +16,9 @@ class User(AbstractUser, ValidateUsername):
         (USER, 'Пользователь'),
     )
 
-    email = models.EmailField('Почта', max_length=EMAIL, unique=True)
+    email = models.EmailField('Электронная почта', max_length=EMAIL, unique=True)
     username = models.CharField(
-        'Никнэйм', max_length=USERNAME_NAME, unique=True
+        'Никнейм пользователя', max_length=USERNAME_NAME, unique=True
     )
     role = models.CharField(
         'Роль',
@@ -41,8 +40,8 @@ class User(AbstractUser, ValidateUsername):
 
     class Meta:
         ordering = ('id',)
-        verbose_name = 'пользователь'
-        verbose_name_plural = 'пользователи'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username
