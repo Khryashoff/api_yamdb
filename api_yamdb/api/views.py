@@ -3,20 +3,22 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
 
 from .serializers import UsersSerializer, UserEditSerializer, RegistrationSerializer, TokenSerializer
-from .permissions import IsAdmin
+from .permissions import IsAdmin, IsAdminModeratorAuthorOrReadOnly, IsAdminOrReadOnly
 
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register_user(request):
     """Функция регистрации user, генерации и отправки кода на почту"""
 
@@ -39,38 +41,36 @@ def register_user(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_token(request):
     """Функция выдачи токена"""
-
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = get_object_or_404(
-        User, username=serializer.validated_data['username']
-    )
-    if default_token_generator.check_token(
-            user, serializer.validated_data['confirmation_code']
-    ):
-        token = RefreshToken.for_user(user)
-        return Response(
-            {'access': str(token.access_token)}, status=status.HTTP_200_OK
-        )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    username = serializer.data['username']
+    confirmation_code = serializer.data['confirmation_code']
+    user = get_object_or_404(User, username=username)
+
+    if default_token_generator.check_token(user, confirmation_code):
+        token = str(AccessToken.for_user(user))
+        return Response({'token': token}, status=status.HTTP_200_OK)
+    return Response(status=400)
 
 class UserViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели User"""
 
     queryset = User.objects.all()
+    http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = UsersSerializer
     permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
-    lookup_value_regex = '[^/]+'
+    pagination_class = PageNumberPagination
 
     @action(
         methods=['get', 'patch'],
         detail=False, url_path='me',
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
         serializer_class=UserEditSerializer,
     )
     def get_edit_user(self, request):

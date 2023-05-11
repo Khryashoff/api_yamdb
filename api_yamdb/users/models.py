@@ -17,9 +17,6 @@ class User(AbstractUser, ValidateUsername):
     )
 
     email = models.EmailField('Электронная почта', max_length=EMAIL, unique=True)
-    username = models.CharField(
-        'Никнейм пользователя', max_length=USERNAME_NAME, unique=True
-    )
     role = models.CharField(
         'Роль',
         max_length=max([len(role) for role, name in ROLES]),
