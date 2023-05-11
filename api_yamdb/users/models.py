@@ -8,6 +8,7 @@ from users.validators import ValidateUsername
 
 class User(AbstractUser, ValidateUsername):
     """Класс, представляющий пользователя."""
+
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'

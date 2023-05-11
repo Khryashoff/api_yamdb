@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from django.db.models import Avg
 
@@ -47,14 +48,14 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор модели Category."""
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор модели Genre."""
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitleRetrieveSerializer(serializers.ModelSerializer):
@@ -139,4 +140,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
