@@ -119,15 +119,15 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Значения score от 1 до 10!')
         return value
 
-# дополнить
     def validate(self, attrs):
-        author = attrs.get('author')
-        title = attrs.get('title')
-        if Review.objects.filter(
-            author=author, title=title
-        ).exists():
+        request = self.context.get("request")
+        title_id = self.context.get("view").kwargs.get("title_id")
+        if (request.method == "POST" and Review.objects.filter(
+                author=request.user, title__id=title_id
+        ).exists()):
             raise serializers.ValidationError(
-                'Допускается только один отзыв!')
+                "Допускается только один отзыв!"
+            )
         return attrs
 
 
