@@ -8,7 +8,9 @@ from .validators import validate_year_not_future
 
 
 class Category(models.Model):
-    """Класс, представляющий категории."""
+    """
+    Класс, представляющий категории.
+    """
     name = models.CharField(
         verbose_name='Наименование категории',
         max_length=256,
@@ -20,19 +22,18 @@ class Category(models.Model):
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
         return self.name
 
-    # def __str__(self) -> str:
-    #     return f'{self.name}, {self.slug}' # изменить ?{'name': 'Фильм', 'slug': 'films'}
-
 
 class Genre(models.Model):
-    """Класс, представляющий жанры."""
+    """
+    Класс, представляющий жанры.
+    """
     name = models.CharField(
         verbose_name='Наименование жанра',
         max_length=256,
@@ -44,7 +45,7 @@ class Genre(models.Model):
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -53,7 +54,9 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Класс, представляющий произведение."""
+    """
+    Класс, представляющий произведение.
+    """
     category = models.ForeignKey(
         Category,
         verbose_name='Категория контента',
@@ -64,7 +67,6 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         verbose_name='Жанр контента',
-        through='GenreTitle',
         related_name='titles',
     )
     name = models.CharField(
@@ -91,26 +93,10 @@ class Title(models.Model):
         return f'{self.name} {self.genres}'
 
 
-class GenreTitle(models.Model):
-    """Класс, представляющий связь жанров и произведений."""
-    genre = models.ForeignKey(
-        Genre,
-        verbose_name='Жанр контента',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-    title = models.ForeignKey(
-        Title,
-        verbose_name='Произведение',
-        on_delete=models.CASCADE,
-    )
-
-    def __str__(self) -> str:
-        return f'Произведение {self.title} относится к жанру {self.genre}'
-
-
 class Review(models.Model):
-    """Класс, представляющий отзывы."""
+    """
+    Класс, представляющий отзывы.
+    """
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -138,7 +124,9 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Класс, представляющий комментарии."""
+    """
+    Класс, представляющий комментарии.
+    """
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,

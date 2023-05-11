@@ -1,13 +1,16 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import validate_email
 from django.db import models
+from django.core.validators import validate_email
+from django.contrib.auth.models import AbstractUser
+
 from api_yamdb.settings import EMAIL, USERNAME_NAME
 
 from users.validators import ValidateUsername
 
 
 class User(AbstractUser, ValidateUsername):
-    """Класс, представляющий пользователя."""
+    """
+    Класс, представляющий пользователя.
+    """
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
@@ -50,9 +53,9 @@ class User(AbstractUser, ValidateUsername):
         default=USER,
     )
 
-    # @property
-    # def is_user(self):
-    #     return True if not self.is_staff else None
+    @property
+    def is_user(self):
+        return True if not self.is_staff else None
 
     @property
     def is_moderator(self):

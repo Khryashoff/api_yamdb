@@ -24,15 +24,4 @@ class CategoriesAdmin(UserAdmin):
     list_filter = ('username',)
     list_editable = ('is_staff', 'role',)
     empty_value_display = '-пусто-'
-
     ordering = ['role']
-    fieldsets = (
-        (
-            'Пользовательские данные',
-            {'fields': ('username', 'email', 'date_joined',)}
-        ),
-        (
-            'Администраторские полномочия',
-            {'fields': ('is_active', 'role', 'is_superuser',)}
-        ),
-    )

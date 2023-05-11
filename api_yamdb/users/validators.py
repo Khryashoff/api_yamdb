@@ -4,8 +4,9 @@ from django.core.exceptions import ValidationError
 
 
 class ValidateUsername:
-    """Валидаторы для username."""
-
+    """
+    Валидатор для username.
+    """
     def validate_username(self, username):
         pattern = re.compile(r'^[\w.@+-]+')
 

@@ -14,7 +14,6 @@ class TitleAdmin(admin.ModelAdmin):
     list_editable = ('category',)
     list_filter = ('genre', 'category')
     search_fields = ('name',)
-    empty_value_display = '-пусто-'
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,7 +23,6 @@ class CategoryAdmin(admin.ModelAdmin):
         'slug',
     )
     list_editable = ('slug',)
-    empty_value_display = '-пусто-'
 
 
 class GenreAdmin(admin.ModelAdmin):
@@ -34,7 +32,6 @@ class GenreAdmin(admin.ModelAdmin):
         'slug',
     )
     list_editable = ('slug',)
-    empty_value_display = '-пусто-'
 
 
 admin.site.register(Title, TitleAdmin)
