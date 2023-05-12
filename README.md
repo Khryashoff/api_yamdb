@@ -6,12 +6,12 @@
 [![Postman](https://img.shields.io/badge/Postman-464646?style=flat-square&logo=postman)](https://www.postman.com/)
 
 ## Description
-The YaMDb project collects user "Reviews" of works. Unfortunately, the works themselves are not stored in YaMDb, you can't watch a movie or listen to music here, but you can read about them.
-The works are divided into categories such as "Books", "Movies", "Music".
-A work can be assigned a "Genre" from the preset list.
-Only the administrator can add works, categories and genres.
+The YaMDb project collects user 'Reviews' of works. Unfortunately, the works themselves are not stored in YaMDb, you can't watch a movie or listen to music here, but you can read about them.<br>
+The 'Title' are divided into categories such as "Books", "Movies", "Music".
+A title can be assigned a 'Genre' from the preset list.
+Only the administrator can add works, categories and genres.<br>
 You can come to us and leave an assessment on the work you like, write an enthusiastic review for it, or vice versa, share your indignation at the next film from the Star Wars© saga. On the basis of the obtained estimates, an average estimate of the work is formed - a rating.
-Users can leave "Comments" to reviews.
+Users can leave 'Comments' to reviews.<br>
 Only authenticated users can add reviews, comments and ratings, so please register.
 
 ## Technologies
@@ -118,6 +118,6 @@ http://127.0.0.1:8000/redoc/
 ```
 
 ## Participants
-Victoria Sergeeva [(vika6107)](https://github.com/vika6107) - user management (Auth and Users): registration and authentication system, access rights, token operation, e-mail confirmation system, fields;
-Sergey Khryashchev [(Khryashoff)](https://github.com/Khryashoff) - Teamlead. Categories (Categories), genres (Genres) and works (Titles): models, views and endpoints for them;
+Victoria Sergeeva [(vika6107)](https://github.com/vika6107) - user management (Auth and Users): registration and authentication system, access rights, token operation, e-mail confirmation system, fields;<br>
+Sergey Khryashchev [(Khryashoff)](https://github.com/Khryashoff) - Teamlead. Categories (Categories), genres (Genres) and works (Titles): models, views and endpoints for them;<br>
 Timur Gimadiev [(Timur)](https://github.com/Timur-Gimadiev)- reviews (Review) and comments (Comments): models and views, endpoints, access rights for requests. Ratings of works.
