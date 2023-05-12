@@ -1,5 +1,5 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from .views import (UserViewSet,
                     get_token,
@@ -11,7 +11,9 @@ from .views import (UserViewSet,
                     CommentViewSet)
 
 
-router_v1 = DefaultRouter()
+app_name = 'api'
+
+router_v1 = SimpleRouter()
 router_v1.register(r'users', UserViewSet, basename='users')
 router_v1.register(r'genres', GenreViewSet, basename='genres')
 router_v1.register(r'categories', CategoryViewSet, basename='categories')

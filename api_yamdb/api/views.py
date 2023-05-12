@@ -8,10 +8,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework_simplejwt.tokens import AccessToken
 
 from users.models import User
 from reviews.models import Genre, Category, Title, Review, Comment
@@ -36,6 +36,7 @@ from .serializers import (TitleRetrieveSerializer,
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register_user(request):
     """
     Осуществляет регистрацию новых пользователей.
@@ -60,6 +61,7 @@ def register_user(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_token(request):
     """
     Получает токен доступа для пользователя с указанными
@@ -67,17 +69,14 @@ def get_token(request):
     """
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = get_object_or_404(
-        User, username=serializer.validated_data['username']
-    )
-    if default_token_generator.check_token(
-            user, serializer.validated_data['confirmation_code']
-    ):
-        token = RefreshToken.for_user(user)
-        return Response(
-            {'access': str(token.access_token)}, status=status.HTTP_200_OK
-        )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    username = serializer.data['username']
+    confirmation_code = serializer.data['confirmation_code']
+    user = get_object_or_404(User, username=username)
+
+    if default_token_generator.check_token(user, confirmation_code):
+        token = str(AccessToken.for_user(user))
+        return Response({'token': token}, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -85,12 +84,12 @@ class UserViewSet(viewsets.ModelViewSet):
     Набор представлений для работы с User.
     """
     queryset = User.objects.all()
+    http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = UsersSerializer
     permission_classes = [IsAdminOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ('username',)
     lookup_field = 'username'
-    lookup_value_regex = '[^/]+'
 
     @action(
         methods=['get', 'patch'],
@@ -178,6 +177,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     Набор представлений для работы с Comment.
     """
     serializer_class = CommentSerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = [IsAuthorModeratorAdminOrReadOnly]
 
     def get_queryset(self):

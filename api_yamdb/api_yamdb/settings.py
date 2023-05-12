@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from datetime import timedelta
 
@@ -120,9 +121,9 @@ DEFAULT_FROM_EMAIL = 'noreply@yamdb.ru'
 
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
@@ -137,7 +138,9 @@ SIMPLE_JWT = {
 }
 
 # The number of first characters of the text displayed by default
-FIRST_CHARACTERS_OF_TEXT = 20
+FIRST_CHARACTERS_OF_TEXT: int = 20
 
 USERNAME_NAME: int = 150
 EMAIL: int = 254
+
+REGEX_USERNAME = re.compile(r'^[\w.@+-]+')

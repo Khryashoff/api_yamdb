@@ -2,12 +2,10 @@ from django.db import models
 from django.core.validators import validate_email
 from django.contrib.auth.models import AbstractUser
 
-from api_yamdb.settings import EMAIL, USERNAME_NAME
-
-from users.validators import ValidateUsername
+from api_yamdb.settings import EMAIL
 
 
-class User(AbstractUser, ValidateUsername):
+class User(AbstractUser):
     """
     Класс, представляющий пользователя.
     """
@@ -21,11 +19,6 @@ class User(AbstractUser, ValidateUsername):
         (USER, 'Пользователь'),
     ]
 
-    username = models.CharField(
-        verbose_name='Никнейм пользователя',
-        max_length=USERNAME_NAME,
-        unique=True,
-    )
     email = models.EmailField(
         verbose_name='Электронная почта',
         validators=[validate_email],
@@ -68,10 +61,16 @@ class User(AbstractUser, ValidateUsername):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    class Meta:
-        ordering = ['id']
+    class Meta(AbstractUser.Meta):
+        ordering = ['username']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_username_email'
+            )
+        ]
 
     def __str__(self):
         return self.username
