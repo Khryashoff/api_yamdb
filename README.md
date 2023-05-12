@@ -118,6 +118,8 @@ http://127.0.0.1:8000/redoc/
 ```
 
 ## Participants
-Victoria Sergeeva [(vika6107)](https://github.com/vika6107) - user management (Auth and Users): registration and authentication system, access rights, token operation, e-mail confirmation system, fields;<br>
-Sergey Khryashchev [(Khryashoff)](https://github.com/Khryashoff) - Teamlead. Categories (Categories), genres (Genres) and works (Titles): models, views and endpoints for them;<br>
-Timur Gimadiev [(Timur)](https://github.com/Timur-Gimadiev)- reviews (Review) and comments (Comments): models and views, endpoints, access rights for requests. Ratings of works.
+Victoria Sergeeva [(vika6107)](https://github.com/vika6107) - user management (Auth and Users): registration and authentication system, access rights, token operation, e-mail confirmation system, fields;
+
+Sergey Khryashchev [(Khryashoff)](https://github.com/Khryashoff) - Teamlead. Categories (Categories), genres (Genres) and works (Titles): models, views and endpoints for them;
+
+Timur Gimadiev [(Timur)](https://github.com/Timur-Gimadiev) - reviews (Review) and comments (Comments): models and views, endpoints, access rights for requests. Ratings of works.
