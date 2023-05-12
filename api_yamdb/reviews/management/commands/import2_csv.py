@@ -5,11 +5,12 @@ from reviews.models import Genre, Category, Title, Review, Comment
 from users.models import User
 import csv
 from django.conf import settings
+
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api_yamdb.settings')
 django.setup()
 
 
-    
 DATA = {
     Genre: 'genre.csv',
     Category: 'category.csv',
@@ -35,4 +36,6 @@ class Command(BaseCommand):
                     records.append(model(**row))
 
             model.objects.bulk_create(records)
-            self.stdout.write(self.style.SUCCESS('Successfully closed poll', model))
+            self.stdout.write(
+                self.style.SUCCESS('Successfully closed poll', model)
+            )
