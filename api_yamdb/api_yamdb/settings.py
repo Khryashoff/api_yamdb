@@ -137,10 +137,26 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=6000),
 }
 
-# The number of first characters of the text displayed by default
-FIRST_CHARACTERS_OF_TEXT: int = 20
 
+# Constants of the minimum and maximum rating of the title
+MAX_RATING: int = 10
+MIN_RATING: int = 1
+
+# The number of characters in the title of the work
+NAME_LENGTH: int = 256
+
+# The number of characters in the slug to the title
+SLUG_LENGTH: int = 50
+
+# The number of characters in the description of the work and the review
+DESCRIPTION_LENGTH: int = 1000
+
+# The number of first characters of the text displayed by default
+FIRST_CHARACTERS_OF_TEXT: int = 30
+
+# The number of characters in the fields associated with the user's name and email
 USERNAME_NAME: int = 150
 EMAIL: int = 254
 
+# The pattern of the username
 REGEX_USERNAME = re.compile(r'^[\w.@+-]+')

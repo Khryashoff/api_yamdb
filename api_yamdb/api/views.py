@@ -16,23 +16,16 @@ from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
 from reviews.models import Genre, Category, Title, Review, Comment
 
-from .filters import TitleFilter
-from .mixins import ListCreateDestroyViewSet
-from .permissions import (IsAdminOnly,
-                          IsAdminOrReadOnly,
-                          IsAuthorModeratorAdminOrReadOnly)
-
-from .serializers import (UsersSerializer,
-                          UserEditSerializer,
-                          RegistrationSerializer,
-                          TokenSerializer)
-
-from .serializers import (TitleRetrieveSerializer,
-                          TitleCreateSerializer,
-                          GenreSerializer,
-                          ReviewSerializer,
-                          CommentSerializer,
-                          CategorySerializer)
+from api.filters import TitleFilter
+from api.mixins import ListCreateDestroyViewSet
+from api.permissions import (IsAdminOnly,
+                             IsAdminOrReadOnly,
+                             IsAuthorModeratorAdminOrReadOnly)
+from api.serializers import (UsersSerializer, UserEditSerializer,
+                             RegistrationSerializer, TokenSerializer,
+                             TitleRetrieveSerializer, TitleCreateSerializer,
+                             GenreSerializer, CategorySerializer,
+                             ReviewSerializer, CommentSerializer)
 
 
 @api_view(['POST'])

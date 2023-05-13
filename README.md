@@ -93,6 +93,12 @@ Authorization: Bearer Token {your_token}
 PATCH /api/v1/users/me/
 ```
 
+## Filling tables with test data
+To upload csv data to the database:
+```bash
+python manage.py import_csv
+```
+
 ## Request examples
 ```
 GET, POST /api/v1/titles/ - receiving and creation works.

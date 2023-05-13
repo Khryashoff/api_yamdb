@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
-from api_yamdb.settings import EMAIL, USERNAME_NAME
+from api_yamdb.settings import (EMAIL, USERNAME_NAME,
+                                MAX_RATING, MIN_RATING)
 
 from users.models import User
 from users.validators import ValidateUsername
@@ -146,7 +147,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         Производит валидацию поля score на
         соответствие установленному диапазону.
         """
-        if 1 >= value >= 10:
+        if MIN_RATING >= value >= MAX_RATING:
             raise serializers.ValidationError('Значения score от 1 до 10!')
         return value
 

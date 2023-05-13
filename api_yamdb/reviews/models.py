@@ -2,55 +2,32 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from users.models import User
-from api_yamdb.settings import FIRST_CHARACTERS_OF_TEXT
 
-from .validators import validate_year_not_future
+from api_yamdb.settings import (NAME_LENGTH, DESCRIPTION_LENGTH,
+                                FIRST_CHARACTERS_OF_TEXT,
+                                MAX_RATING, MIN_RATING)
+from reviews.validators import validate_year_not_future
+from reviews.base import CategoryGenreModel
 
 
-class Category(models.Model):
+class Category(CategoryGenreModel):
     """
     Класс, представляющий категории.
     """
-    name = models.CharField(
-        verbose_name='Наименование категории',
-        max_length=256,
-    )
-    slug = models.SlugField(
-        verbose_name='Идентификатор категории',
-        max_length=50,
-        unique=True,
-    )
-
     class Meta:
         ordering = ['id']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
-    def __str__(self) -> str:
-        return self.name
 
-
-class Genre(models.Model):
+class Genre(CategoryGenreModel):
     """
     Класс, представляющий жанры.
     """
-    name = models.CharField(
-        verbose_name='Наименование жанра',
-        max_length=256,
-    )
-    slug = models.SlugField(
-        verbose_name='Идентификатор жанра',
-        max_length=50,
-        unique=True,
-    )
-
     class Meta:
         ordering = ['id']
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class Title(models.Model):
@@ -71,7 +48,7 @@ class Title(models.Model):
     )
     name = models.CharField(
         verbose_name='Наименование произведения',
-        max_length=256,
+        max_length=NAME_LENGTH,
     )
     year = models.IntegerField(
         verbose_name='Дата релиза произведения',
@@ -80,7 +57,7 @@ class Title(models.Model):
     description = models.TextField(
         verbose_name='Описание произведения',
         default='Нет описания',
-        max_length=200,
+        max_length=DESCRIPTION_LENGTH,
         blank=True,
     )
 
@@ -89,7 +66,7 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name} {self.genres}'
 
 
@@ -103,11 +80,16 @@ class Review(models.Model):
         related_name='reviews',
         blank=False,
     )
-    text = models.TextField(max_length=1000, blank=False)
+    text = models.TextField(
+        max_length=DESCRIPTION_LENGTH,
+        blank=False
+    )
     score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        validators=[
+            MinValueValidator(MIN_RATING), MaxValueValidator(MAX_RATING)
+        ],
         blank=False,
-        default=1
+        default=MIN_RATING
     )
     author = models.ForeignKey(
         User,
@@ -119,7 +101,7 @@ class Review(models.Model):
     class Meta:
         unique_together = ('author', 'title')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text[:FIRST_CHARACTERS_OF_TEXT]
 
 
@@ -145,5 +127,5 @@ class Comment(models.Model):
         auto_now_add=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text[:FIRST_CHARACTERS_OF_TEXT]

@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import validate_email
 from django.contrib.auth.models import AbstractUser
 
-from api_yamdb.settings import EMAIL
+from api_yamdb.settings import EMAIL, USERNAME_NAME
 
 
 class User(AbstractUser):
@@ -12,6 +12,9 @@ class User(AbstractUser):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     ROLES = [
         (ADMIN, 'Администратор'),
@@ -27,12 +30,12 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         verbose_name='Имя пользователя',
-        max_length=150,
+        max_length=USERNAME_NAME,
         blank=True,
     )
     last_name = models.CharField(
         verbose_name='Фамилия пользователя',
-        max_length=150,
+        max_length=USERNAME_NAME,
         blank=True,
     )
     bio = models.TextField(
@@ -58,9 +61,6 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == self.ADMIN or self.is_superuser or self.is_staff
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
     class Meta(AbstractUser.Meta):
         ordering = ['username']
         verbose_name = 'Пользователь'
@@ -72,5 +72,5 @@ class User(AbstractUser):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
