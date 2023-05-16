@@ -18,7 +18,7 @@ Only authenticated users can add reviews, comments and ratings, so please regist
 - Python 3.9.10
 - Django 3.2.16
 - Django REST framework 3.12.4
-- JWT + Djoser
+- JWT
 
 ## Launching a project in dev mode
 1. Clone the repository and go to it on the command line:
@@ -93,7 +93,7 @@ Authorization: Bearer Token {your_token}
 PATCH /api/v1/users/me/
 ```
 
-## Filling tables with test data
+# Filling tables with test data
 To upload csv data to the database:
 ```bash
 python manage.py import_csv
