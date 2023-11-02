@@ -1,14 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_email
 from django.db import models
+from api_yamdb.settings import EMAIL, USERNAME_NAME
+
+from users.validators import ValidateUsername
 
 
-class User(AbstractUser):
+class User(AbstractUser, ValidateUsername):
     """Класс, представляющий пользователя."""
+
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
-    ROLE_CHOICES = [
+
+    ROLES = [
         (ADMIN, 'Администратор'),
         (MODERATOR, 'Модератор'),
         (USER, 'Пользователь'),
@@ -16,13 +21,13 @@ class User(AbstractUser):
 
     username = models.CharField(
         verbose_name='Никнейм пользователя',
-        max_length=150,
+        max_length=USERNAME_NAME,
         unique=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         validators=[validate_email],
-        max_length=254,
+        max_length=EMAIL,
         unique=True,
     )
     first_name = models.CharField(
@@ -41,10 +46,25 @@ class User(AbstractUser):
     )
     role = models.CharField(
         verbose_name='Полномочия доступа',
-        max_length=20,
-        choices=ROLE_CHOICES,
+        max_length=max([len(role) for role, name in ROLES]),
+        choices=ROLES,
         default=USER,
     )
+
+    # @property
+    # def is_user(self):
+    #     return True if not self.is_staff else None
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_superuser or self.is_staff
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     class Meta:
         ordering = ['id']
